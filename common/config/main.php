@@ -20,5 +20,17 @@ return [
             ],
             'showScriptName' => false,
         ],
+        'mailer' => [
+            'class' => \yii\symfonymailer\Mailer::class,
+            'viewPath' => '@common/mail',
+            'transport' => [
+//                'scheme' => 'smtp',
+//                'host' => 'smtp-relay.sendinblue.com',
+                'username' => 'cosmeanq@gmail.com',
+                'password' => '6BnEcrRxDFYvszgw',
+                'port' => 587,
+            ],
+            'useFileTransport' => false,
+        ],
     ],
 ];

@@ -15,17 +15,17 @@ class SignupService
         $user->generateAuthKey();
         $user->setPassword($form->password);
         $user->email = $form->email;
-        $user->email_confirm_token = Yii::$app->security->generateRandomString();
-        $user->status = User::STATUS_WAIT;
+        $user->verification_token = Yii::$app->security->generateRandomString();
+        $user->status = User::STATUS_INACTIVE;
 
-        if (!$user->save()) {
+        if(!$user->save()){
             throw new \RuntimeException('Saving error.');
         }
 
         return $user;
     }
 
-    public function sentEmailConfirmation(User $user)
+        public function sentEmailConfirmation(User $user)
     {
         $email = $user->email;
 
@@ -48,18 +48,18 @@ class SignupService
             throw new \DomainException('Empty confirm token.');
         }
 
-        $user = User::findOne(['email_confirm_token' => $token]);
+        $user = User::findOne(['verification_token' => $token]);
         if (!$user) {
             throw new \DomainException('User is not found.');
         }
 
-        $user->email_confirm_token = null;
+        $user->verification_token = null;
         $user->status = User::STATUS_ACTIVE;
         if (!$user->save()) {
             throw new \RuntimeException('Saving error.');
         }
 
-        if (!Yii::$app->getUser()->login($user)) {
+        if (!Yii::$app->getUser()->login($user)){
             throw new \RuntimeException('Error authentication.');
         }
     }

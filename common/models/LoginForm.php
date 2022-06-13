@@ -63,7 +63,7 @@ class LoginForm extends Model
             if($user->status === User::STATUS_ACTIVE){
                 return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
             }
-            if($user->status === User::STATUS_WAIT){
+            if($user->status === User::STATUS_INACTIVE){
                 throw new \DomainException('To complete the registration, confirm your email. Check your email.');
             }
         }
