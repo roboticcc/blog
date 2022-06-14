@@ -5,9 +5,20 @@ namespace common\services\auth;
 use common\models\User;
 use frontend\models\SignupForm;
 use Yii;
+use yii\base\Exception;
 
+/**
+ * Sign-up service, used to add a user and verify its email
+ */
 class SignupService
 {
+    /**
+     * @param SignupForm $form
+     * @return User
+     * @throws Exception
+     *
+     * Saves new User object to database
+     */
     public function signup(SignupForm $form)
     {
         $user = new User();
@@ -18,14 +29,20 @@ class SignupService
         $user->verification_token = Yii::$app->security->generateRandomString();
         $user->status = User::STATUS_INACTIVE;
 
-        if(!$user->save()){
+        if (!$user->save()) {
             throw new \RuntimeException('Saving error.');
         }
 
         return $user;
     }
 
-        public function sentEmailConfirmation(User $user)
+    /**
+     * @param User $user
+     * @return void
+     *
+     * Sends confirmation email to the email provided by user when signing up
+     */
+    public function sentEmailConfirmation(User $user)
     {
         $email = $user->email;
 
@@ -42,6 +59,12 @@ class SignupService
         }
     }
 
+    /**
+     * @param $token
+     * @return void
+     *
+     * Checks whether verification token is correct and if so, changes user status in database
+     */
     public function confirmation($token): void
     {
         if (empty($token)) {
@@ -59,7 +82,7 @@ class SignupService
             throw new \RuntimeException('Saving error.');
         }
 
-        if (!Yii::$app->getUser()->login($user)){
+        if (!Yii::$app->getUser()->login($user)) {
             throw new \RuntimeException('Error authentication.');
         }
     }
